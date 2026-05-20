@@ -1,0 +1,12 @@
+# Nix/Direnv
+.direnv
+result
+
+# Data
+data.json
+*.tmp
+
+# IDE/Editor
+.vscode
+.idea
+*.swp
