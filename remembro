@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+DATA="$HOME/.remembro/data.json"
+[ ! -f "$DATA" ] && echo '{"commands": []}' > "$DATA"
+
+usage() {
+    echo "Usage: remembro [-l|-t|-a|-e|-d] [args]"
+    echo "  -l: List commands"
+    echo "  -t: Tree view (categorized)"
+    echo "  -a [name] [cmd] [category]: Add command"
+    echo "  -e [name]: Edit command"
+    echo "  -d [name]: Delete command"
+    echo "  Search: remembro [query]"
+}
+
+list_cmds() {
+    jq -r '.commands[] | "\(.name): \(.cmd) [\(.category)]"' "$DATA"
+}
+
+add_cmd() {
+    local name="$1" cmd="$2" cat="${3:-general}"
+    jq --arg n "$name" --arg c "$cmd" --arg cat "$cat" \
+       '.commands += [{"name": $n, "cmd": $c, "category": $cat}]' \
+       "$DATA" > "$DATA.tmp" && mv "$DATA.tmp" "$DATA"
+}
+
+delete_cmd() {
+    jq --arg n "$1" '.commands |= map(select(.name != $n))' \
+       "$DATA" > "$DATA.tmp" && mv "$DATA.tmp" "$DATA"
+}
+
+search_cmd() {
+    jq -r --arg q "$1" '.commands[] | select(.name | contains($q)) | "\(.name): \(.cmd)"' "$DATA"
+}
+
+case "$1" in
+    -l|--list) list_cmds ;;
+    -t|--tree) jq -r 'group_by(.category)[] | "\(.[0].category)\n  \(.[].name): \(.cmd)"' "$DATA" ;;
+    -a|--add) add_cmd "$2" "$3" "$4" ;;
+    -d|--delete) delete_cmd "$2" ;;
+    -e|--edit) ${EDITOR:-nvim} "$DATA" ;;
+    -h|--help) usage ;;
+    *) if [ -n "$1" ]; then search_cmd "$1"; else usage; fi ;;
+esac
