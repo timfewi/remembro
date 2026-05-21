@@ -29,7 +29,7 @@
               '';
               homepage = "https://github.com/timfewi/remembro";
               license = pkgs.lib.licenses.mit;
-              maintainers = pkgs.lib.maintainers;
+              maintainers = [ ];
               platforms = pkgs.lib.platforms.unix;
               mainProgram = "remembro";
             };
