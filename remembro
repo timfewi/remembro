@@ -16,6 +16,22 @@ DATA="$DATA_DIR/data.json"
 mkdir -p "$DATA_DIR"
 [ ! -f "$DATA" ] && echo '{"commands": []}' > "$DATA"
 
+if [[ -t 1 && "${NO_COLOR:-}" == "" ]]; then
+    BOLD=$'\033[1m'
+    DIM=$'\033[2m'
+    CYAN=$'\033[36m'
+    GREEN=$'\033[32m'
+    YELLOW=$'\033[33m'
+    RESET=$'\033[0m'
+else
+    BOLD=""
+    DIM=""
+    CYAN=""
+    GREEN=""
+    YELLOW=""
+    RESET=""
+fi
+
 usage() {
     cat <<EOF
 Usage: remembro [options] [args]
@@ -42,8 +58,40 @@ run_jq() {
     mv "$DATA.tmp" "$DATA"
 }
 
+render_cmds() {
+    jq -r \
+        --arg bold "$BOLD" \
+        --arg dim "$DIM" \
+        --arg cyan "$CYAN" \
+        --arg green "$GREEN" \
+        --arg yellow "$YELLOW" \
+        --arg reset "$RESET" \
+        '
+        def field($key): .[$key] // "";
+        def tags:
+          if (.tags // []) | length > 0 then
+            " " + $dim + "#" + ((.tags // []) | join(" #")) + $reset
+          else "" end;
+        def notes:
+          if field("notes") != "" then
+            "\n    " + $dim + "Note: " + field("notes") + $reset
+          else "" end;
+        .commands
+        | sort_by(.category // "general", .name // "")
+        | group_by(.category // "general")
+        | .[]
+        | ($bold + $yellow + "== " + (.[0].category // "general") + " ==" + $reset),
+          (.[] |
+            "  " + $bold + $green + (.name // "unnamed") + $reset + tags + "\n" +
+            "    " + $cyan + (.cmd // "") + $reset +
+            (if field("description") != "" then "\n    " + field("description") else "" end) +
+            notes
+          )
+        ' "$DATA"
+}
+
 list_cmds() {
-    jq -r '.commands[] | "\(.name): \(.cmd) [\(.category)]"' "$DATA"
+    render_cmds
 }
 
 add_cmd() {
@@ -73,14 +121,56 @@ delete_cmd() {
 
 search_cmd() {
     local query="$1"
-    jq -r --arg q "$query" '.commands[] | select(.name | contains($q)) | "\(.name): \(.cmd)"' "$DATA"
+    jq -r \
+        --arg q "${query,,}" \
+        --arg bold "$BOLD" \
+        --arg dim "$DIM" \
+        --arg cyan "$CYAN" \
+        --arg green "$GREEN" \
+        --arg yellow "$YELLOW" \
+        --arg reset "$RESET" \
+        '
+        def haystack:
+          [
+            .name,
+            .cmd,
+            .category,
+            .description,
+            .notes,
+            ((.tags // []) | join(" "))
+          ] | map(. // "") | join(" ") | ascii_downcase;
+        def tags:
+          if (.tags // []) | length > 0 then
+            " " + $dim + "#" + ((.tags // []) | join(" #")) + $reset
+          else "" end;
+        def notes:
+          if (.notes // "") != "" then
+            "\n    " + $dim + "Note: " + .notes + $reset
+          else "" end;
+        [
+          .commands[]
+          | select(haystack | contains($q))
+        ] as $matches
+        | if ($matches | length) == 0 then
+            $dim + "No matches for " + $reset + $yellow + $q + $reset
+          else
+            $matches
+            | sort_by(.category // "general", .name // "")
+            | .[]
+            | $bold + $green + (.name // "unnamed") + $reset +
+              " " + $dim + "[" + (.category // "general") + "]" + $reset + tags + "\n" +
+              "  " + $cyan + (.cmd // "") + $reset +
+              (if (.description // "") != "" then "\n  " + .description else "" end) +
+              notes
+          end
+        ' "$DATA"
 }
 
 case "${1:-}" in
     -l|--list) list_cmds ;;
-    -t|--tree) jq -r 'group_by(.category)[] | "\(.[0].category)\n  \(.[].name): \(.cmd)"' "$DATA" ;;
-    -a|--add) add_cmd "$2" "$3" "$4" ;;
-    -d|--delete) delete_cmd "$2" ;;
+    -t|--tree) list_cmds ;;
+    -a|--add) add_cmd "${2:-}" "${3:-}" "${4:-general}" ;;
+    -d|--delete) delete_cmd "${2:-}" ;;
     -e|--edit) ${EDITOR:-vi} "$DATA" ;;
     -h|--help|help) usage ;;
     *) if [ -n "${1:-}" ]; then search_cmd "$1"; else usage; fi ;;

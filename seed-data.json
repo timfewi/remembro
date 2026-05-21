@@ -1,0 +1,1432 @@
+{
+  "commands": [
+    {
+      "name": "openfang-config",
+      "cmd": "openfang config",
+      "category": "agent-runtime",
+      "description": "Inspect OpenFang configuration through the installed CLI.",
+      "tags": [
+        "openfang",
+        "config",
+        "debug"
+      ],
+      "notes": "Exact subcommands may vary; run openfang --help if this CLI differs."
+    },
+    {
+      "name": "openfang-doctor",
+      "cmd": "openfang doctor",
+      "category": "agent-runtime",
+      "description": "Run OpenFang health checks for local agent runtime configuration.",
+      "tags": [
+        "openfang",
+        "doctor",
+        "verify"
+      ],
+      "notes": "Use after broad OpenFang skill, config, or runtime edits."
+    },
+    {
+      "name": "zeroclaw-config-check",
+      "cmd": "python -c 'import pathlib,tomllib; tomllib.loads(pathlib.Path(\"~/.zeroclaw/config.toml\").expanduser().read_text()); print(\"ok\")'",
+      "category": "agent-runtime",
+      "description": "Validate ZeroClaw config TOML with Python's tomllib on Python versions that support module execution.",
+      "tags": [
+        "zeroclaw",
+        "toml",
+        "verify"
+      ],
+      "notes": "Requires Python 3.11 or newer for tomllib."
+    },
+    {
+      "name": "zeroclaw-config-edit",
+      "cmd": "${EDITOR:-vi} ~/.zeroclaw/config.toml",
+      "category": "agent-runtime",
+      "description": "Edit ZeroClaw's local TOML configuration.",
+      "tags": [
+        "zeroclaw",
+        "config",
+        "toml"
+      ],
+      "notes": "Validate TOML syntax after editing because startup failures can come from malformed config."
+    },
+    {
+      "name": "astro-build",
+      "cmd": "bun run build",
+      "category": "astro",
+      "description": "Build an Astro site using the project's Bun script.",
+      "tags": [
+        "astro",
+        "build",
+        "verify"
+      ],
+      "notes": "Run from the Astro project root."
+    },
+    {
+      "name": "astro-check",
+      "cmd": "bunx astro check",
+      "category": "astro",
+      "description": "Run Astro diagnostics and TypeScript checks.",
+      "tags": [
+        "astro",
+        "typescript",
+        "verify"
+      ],
+      "notes": "Pair with the repo's build command before publishing."
+    },
+    {
+      "name": "astro-create",
+      "cmd": "bun create astro@latest site",
+      "category": "astro",
+      "description": "Create an Astro project for content-heavy sites or landing pages.",
+      "tags": [
+        "astro",
+        "bun",
+        "scaffold"
+      ],
+      "notes": "Use Astro when the project is content or landing-page oriented."
+    },
+    {
+      "name": "biome-check",
+      "cmd": "bunx biome check .",
+      "category": "biome",
+      "description": "Run Biome formatting and lint checks across the current project.",
+      "tags": [
+        "biome",
+        "lint",
+        "verify"
+      ],
+      "notes": "Use --write only when you intend to apply safe fixes."
+    },
+    {
+      "name": "biome-init",
+      "cmd": "bunx biome init",
+      "category": "biome",
+      "description": "Create a Biome configuration file in a JS/TS project.",
+      "tags": [
+        "biome",
+        "config",
+        "javascript"
+      ],
+      "notes": "Review generated rules before committing."
+    },
+    {
+      "name": "biome-write",
+      "cmd": "bunx biome check --write .",
+      "category": "biome",
+      "description": "Apply Biome formatting and safe lint fixes.",
+      "tags": [
+        "biome",
+        "format",
+        "fix"
+      ],
+      "notes": "Review the diff after running because this can touch many files."
+    },
+    {
+      "name": "bun-add-dev-biome",
+      "cmd": "bun add -d @biomejs/biome",
+      "category": "biome",
+      "description": "Install Biome as the default formatter and linter for JS/TS projects.",
+      "tags": [
+        "biome",
+        "bun",
+        "tooling"
+      ],
+      "notes": "Prefer Biome by default unless the repo already has a stronger formatter/linter convention."
+    },
+    {
+      "name": "docker-compose-config",
+      "cmd": "docker compose config",
+      "category": "containers",
+      "description": "Render the fully resolved Docker Compose configuration.",
+      "tags": [
+        "docker",
+        "compose",
+        "verify"
+      ],
+      "notes": "Useful for catching environment interpolation and YAML merge issues."
+    },
+    {
+      "name": "docker-compose-down-volumes",
+      "cmd": "docker compose down --volumes --remove-orphans",
+      "category": "containers",
+      "description": "Stop a Compose stack and remove project volumes plus orphaned containers.",
+      "tags": [
+        "docker",
+        "compose",
+        "cleanup"
+      ],
+      "notes": "This deletes local database volume data; use when a full reset is intended."
+    },
+    {
+      "name": "docker-compose-health",
+      "cmd": "docker compose ps --format 'table {{.Name}}\\t{{.Service}}\\t{{.State}}\\t{{.Health}}\\t{{.Ports}}'",
+      "category": "containers",
+      "description": "Show Compose service state, health, and published ports in a compact table.",
+      "tags": [
+        "docker",
+        "compose",
+        "health"
+      ],
+      "notes": "Health is blank for services without a healthcheck."
+    },
+    {
+      "name": "docker-compose-logs",
+      "cmd": "docker compose logs -f --tail=100 SERVICE",
+      "category": "containers",
+      "description": "Follow recent logs for one Docker Compose service.",
+      "tags": [
+        "docker",
+        "logs",
+        "debug"
+      ],
+      "notes": "Omit SERVICE to follow all services in the Compose project."
+    },
+    {
+      "name": "docker-compose-ps",
+      "cmd": "docker compose ps",
+      "category": "containers",
+      "description": "Show container status, health, ports, and service names for a Compose project.",
+      "tags": [
+        "docker",
+        "compose",
+        "status"
+      ],
+      "notes": "Run from the directory containing compose.yaml."
+    },
+    {
+      "name": "docker-compose-up-build",
+      "cmd": "docker compose up --build",
+      "category": "containers",
+      "description": "Build and start all services in a Docker Compose project.",
+      "tags": [
+        "docker",
+        "compose",
+        "dev"
+      ],
+      "notes": "Default local services workflow for Tim's projects."
+    },
+    {
+      "name": "docker-container-shell",
+      "cmd": "docker compose exec SERVICE sh",
+      "category": "containers",
+      "description": "Open an interactive shell inside a running Compose service container.",
+      "tags": [
+        "docker",
+        "shell",
+        "debug"
+      ],
+      "notes": "Use bash instead of sh when the image includes it."
+    },
+    {
+      "name": "docker-disk-usage",
+      "cmd": "docker system df",
+      "category": "containers",
+      "description": "Show Docker disk usage by images, containers, volumes, and build cache.",
+      "tags": [
+        "docker",
+        "disk",
+        "cleanup"
+      ],
+      "notes": "Review before pruning images or volumes."
+    },
+    {
+      "name": "json-extract-field",
+      "cmd": "jq -r '.items[] | .name' file.json",
+      "category": "data",
+      "description": "Extract one field from each object in a JSON array.",
+      "tags": [
+        "json",
+        "jq",
+        "data"
+      ],
+      "notes": "Adjust the path to match the file shape."
+    },
+    {
+      "name": "json-pretty",
+      "cmd": "jq . file.json",
+      "category": "data",
+      "description": "Pretty-print and validate a JSON file.",
+      "tags": [
+        "json",
+        "jq",
+        "data"
+      ],
+      "notes": "jq exits nonzero when the JSON is invalid."
+    },
+    {
+      "name": "drizzle-generate",
+      "cmd": "bunx drizzle-kit generate",
+      "category": "drizzle",
+      "description": "Generate Drizzle SQL migrations from TypeScript schema changes.",
+      "tags": [
+        "drizzle",
+        "postgres",
+        "migration"
+      ],
+      "notes": "Use Drizzle for TypeScript database access in Next.js/BFF projects."
+    },
+    {
+      "name": "drizzle-migrate",
+      "cmd": "bunx drizzle-kit migrate",
+      "category": "drizzle",
+      "description": "Apply generated Drizzle migrations to the configured database.",
+      "tags": [
+        "drizzle",
+        "postgres",
+        "migration"
+      ],
+      "notes": "Check drizzle.config before running against shared databases."
+    },
+    {
+      "name": "drizzle-studio",
+      "cmd": "bunx drizzle-kit studio",
+      "category": "drizzle",
+      "description": "Open Drizzle Studio for inspecting and editing local database data.",
+      "tags": [
+        "drizzle",
+        "postgres",
+        "database"
+      ],
+      "notes": "Use on local or disposable branch databases unless edits are intentional."
+    },
+    {
+      "name": "disk-usage-depth1",
+      "cmd": "du -h --max-depth=1 . | sort -h",
+      "category": "filesystem",
+      "description": "Show disk usage of immediate children under the current directory, sorted by size.",
+      "tags": [
+        "disk",
+        "files",
+        "debug"
+      ],
+      "notes": "Run from the directory you want to inspect."
+    },
+    {
+      "name": "find-large-files",
+      "cmd": "find . -type f -size +500M -print",
+      "category": "filesystem",
+      "description": "Find files larger than 500 MB below the current directory.",
+      "tags": [
+        "disk",
+        "files",
+        "find"
+      ],
+      "notes": "Adjust +500M to the threshold you care about."
+    },
+    {
+      "name": "find-recent-files",
+      "cmd": "find . -type f -mtime -1 -print",
+      "category": "filesystem",
+      "description": "Find files modified in the last 24 hours.",
+      "tags": [
+        "files",
+        "find",
+        "debug"
+      ],
+      "notes": "Use -mmin -30 for files changed in the last 30 minutes."
+    },
+    {
+      "name": "permissions-octal",
+      "cmd": "stat -c '%a %U:%G %n' PATH",
+      "category": "filesystem",
+      "description": "Print octal permissions and owner/group for a file or directory.",
+      "tags": [
+        "files",
+        "permissions",
+        "debug"
+      ],
+      "notes": "Useful before changing chmod/chown settings."
+    },
+    {
+      "name": "rsync-dry-run",
+      "cmd": "rsync -avh --dry-run SOURCE/ DEST/",
+      "category": "filesystem",
+      "description": "Preview a recursive sync before copying files.",
+      "tags": [
+        "files",
+        "rsync",
+        "backup"
+      ],
+      "notes": "Remove --dry-run only after reviewing the planned changes."
+    },
+    {
+      "name": "tar-zstd-create",
+      "cmd": "tar --zstd -cf archive.tar.zst PATH",
+      "category": "filesystem",
+      "description": "Create a zstd-compressed tar archive.",
+      "tags": [
+        "archive",
+        "backup",
+        "zstd"
+      ],
+      "notes": "Use tar --zstd -tf archive.tar.zst to list archive contents."
+    },
+    {
+      "name": "git-branch-cleanup-merged",
+      "cmd": "git branch --merged main",
+      "category": "git",
+      "description": "List local branches already merged into main.",
+      "tags": [
+        "git",
+        "branches",
+        "cleanup"
+      ],
+      "notes": "Review before deleting branches."
+    },
+    {
+      "name": "git-log-graph",
+      "cmd": "git log --oneline --graph --decorate --all -30",
+      "category": "git",
+      "description": "Show recent branch history as a compact decorated graph.",
+      "tags": [
+        "git",
+        "history",
+        "repo"
+      ],
+      "notes": "Increase -30 when you need more history."
+    },
+    {
+      "name": "git-restore-staged",
+      "cmd": "git restore --staged PATH",
+      "category": "git",
+      "description": "Unstage a file without discarding its working-tree changes.",
+      "tags": [
+        "git",
+        "staging",
+        "safe"
+      ],
+      "notes": "Replace PATH with the file or directory to unstage."
+    },
+    {
+      "name": "git-show-staged",
+      "cmd": "git diff --cached",
+      "category": "git",
+      "description": "Review staged changes before committing.",
+      "tags": [
+        "git",
+        "diff",
+        "review"
+      ],
+      "notes": "Use git diff for unstaged changes."
+    },
+    {
+      "name": "git-status-porcelain",
+      "cmd": "git status --short",
+      "category": "git",
+      "description": "Show concise working-tree status suitable for quick review.",
+      "tags": [
+        "git",
+        "status",
+        "repo"
+      ],
+      "notes": "Use before staging so unrelated changes stay visible."
+    },
+    {
+      "name": "bun-install-frozen",
+      "cmd": "bun install --frozen-lockfile",
+      "category": "javascript",
+      "description": "Install dependencies exactly as recorded in bun.lock.",
+      "tags": [
+        "bun",
+        "javascript",
+        "deps"
+      ],
+      "notes": "Use in CI or when you do not want lockfile changes."
+    },
+    {
+      "name": "bun-run-check",
+      "cmd": "bun run check",
+      "category": "javascript",
+      "description": "Run a project-defined check script through Bun.",
+      "tags": [
+        "bun",
+        "javascript",
+        "verify"
+      ],
+      "notes": "Actual behavior depends on package.json scripts."
+    },
+    {
+      "name": "mcp-inspect-node",
+      "cmd": "npx @modelcontextprotocol/inspector COMMAND",
+      "category": "mcp",
+      "description": "Inspect an MCP server command with the official MCP inspector.",
+      "tags": [
+        "mcp",
+        "debug",
+        "inspector"
+      ],
+      "notes": "Replace COMMAND with the full server command and arguments."
+    },
+    {
+      "name": "mcp-server-python",
+      "cmd": "python -m package.mcp_server",
+      "category": "mcp",
+      "description": "Run a Python MCP server module directly for local handshake/debug work.",
+      "tags": [
+        "mcp",
+        "python",
+        "server"
+      ],
+      "notes": "Replace package.mcp_server with the actual module path."
+    },
+    {
+      "name": "dns-debug",
+      "cmd": "resolvectl query example.com",
+      "category": "network",
+      "description": "Ask systemd-resolved to resolve a hostname and show the resolver path.",
+      "tags": [
+        "dns",
+        "network",
+        "debug"
+      ],
+      "notes": "Use resolvectl status to inspect configured DNS servers."
+    },
+    {
+      "name": "http-headers",
+      "cmd": "curl -I https://example.com",
+      "category": "network",
+      "description": "Fetch response headers without downloading the body.",
+      "tags": [
+        "http",
+        "curl",
+        "debug"
+      ],
+      "notes": "Add -L to follow redirects."
+    },
+    {
+      "name": "http-timing",
+      "cmd": "curl -o /dev/null -s -w 'dns=%{time_namelookup} connect=%{time_connect} tls=%{time_appconnect} start=%{time_starttransfer} total=%{time_total}\\n' https://example.com",
+      "category": "network",
+      "description": "Measure DNS, TCP, TLS, first-byte, and total request time for a URL.",
+      "tags": [
+        "http",
+        "curl",
+        "performance"
+      ],
+      "notes": "Good first check before deeper browser or server profiling."
+    },
+    {
+      "name": "ip-addresses",
+      "cmd": "ip -brief address",
+      "category": "network",
+      "description": "Show network interfaces and assigned addresses in a compact table.",
+      "tags": [
+        "network",
+        "ip",
+        "interface"
+      ],
+      "notes": "Use ip route for default route and routing table."
+    },
+    {
+      "name": "listening-ports",
+      "cmd": "ss -ltnp",
+      "category": "network",
+      "description": "Show TCP ports listening on the machine with owning processes.",
+      "tags": [
+        "network",
+        "ports",
+        "debug"
+      ],
+      "notes": "Use ss -lunp for UDP listeners."
+    },
+    {
+      "name": "process-on-port",
+      "cmd": "ss -ltnp 'sport = :PORT'",
+      "category": "network",
+      "description": "Find the process listening on one TCP port.",
+      "tags": [
+        "network",
+        "ports",
+        "debug"
+      ],
+      "notes": "Replace PORT with the numeric port, for example 3000."
+    },
+    {
+      "name": "bun-create-next",
+      "cmd": "bun create next-app@latest app --ts --app --eslint --src-dir --import-alias '@/*'",
+      "category": "nextjs",
+      "description": "Scaffold a TypeScript Next.js App Router project using Bun.",
+      "tags": [
+        "nextjs",
+        "bun",
+        "scaffold"
+      ],
+      "notes": "Select project options deliberately; keep App Router as the default for new web apps."
+    },
+    {
+      "name": "next-build",
+      "cmd": "bun run build",
+      "category": "nextjs",
+      "description": "Build a Next.js app for production.",
+      "tags": [
+        "nextjs",
+        "verify",
+        "bun"
+      ],
+      "notes": "Catches route, server/client boundary, and type integration issues that lint may miss."
+    },
+    {
+      "name": "next-dev",
+      "cmd": "bun run dev",
+      "category": "nextjs",
+      "description": "Start the Next.js development server through the project's Bun script.",
+      "tags": [
+        "nextjs",
+        "bun",
+        "dev"
+      ],
+      "notes": "Use the repo's package.json scripts as source of truth."
+    },
+    {
+      "name": "nix-build-package",
+      "cmd": "nix build .#PACKAGE",
+      "category": "nix",
+      "description": "Build one package output from the current flake.",
+      "tags": [
+        "nix",
+        "flake",
+        "build"
+      ],
+      "notes": "Use nix flake show to find the package name."
+    },
+    {
+      "name": "nix-develop",
+      "cmd": "nix develop",
+      "category": "nix",
+      "description": "Enter the default development shell for a flake-based project.",
+      "tags": [
+        "nix",
+        "devshell",
+        "flake"
+      ],
+      "notes": "Use Nix shells as the default way to get project toolchains and system libraries."
+    },
+    {
+      "name": "nix-develop-command",
+      "cmd": "nix develop --command COMMAND",
+      "category": "nix",
+      "description": "Run a command inside a flake dev shell without staying in the shell.",
+      "tags": [
+        "nix",
+        "devshell",
+        "automation"
+      ],
+      "notes": "Good for CI-like local checks where dependencies must come from the flake."
+    },
+    {
+      "name": "nix-flake-check",
+      "cmd": "nix flake check",
+      "category": "nix",
+      "description": "Evaluate and run all checks, packages, dev shells, and NixOS modules exposed by the current flake.",
+      "tags": [
+        "nix",
+        "flake",
+        "verify"
+      ],
+      "notes": "Run in the flake repository root."
+    },
+    {
+      "name": "nix-flake-show",
+      "cmd": "nix flake show",
+      "category": "nix",
+      "description": "Show the packages, apps, checks, dev shells, and NixOS modules exposed by a flake.",
+      "tags": [
+        "nix",
+        "flake",
+        "inspect"
+      ],
+      "notes": "Run before guessing package or app names."
+    },
+    {
+      "name": "nix-flake-update-input",
+      "cmd": "nix flake lock --update-input nixpkgs",
+      "category": "nix",
+      "description": "Update one flake input while leaving other locked inputs unchanged.",
+      "tags": [
+        "nix",
+        "flake",
+        "lock"
+      ],
+      "notes": "Replace nixpkgs with the input name you want to update."
+    },
+    {
+      "name": "nix-gc-old-generations",
+      "cmd": "sudo nix-collect-garbage --delete-older-than 14d",
+      "category": "nix",
+      "description": "Delete system and user generations older than 14 days, then garbage collect unused store paths.",
+      "tags": [
+        "nix",
+        "gc",
+        "disk"
+      ],
+      "notes": "Adjust the age window if you need a longer rollback history."
+    },
+    {
+      "name": "nix-run-app",
+      "cmd": "nix run .#APP -- --help",
+      "category": "nix",
+      "description": "Run a flake app output and pass arguments to the app.",
+      "tags": [
+        "nix",
+        "flake",
+        "run"
+      ],
+      "notes": "The double dash separates nix options from app options."
+    },
+    {
+      "name": "nix-shell-package",
+      "cmd": "nix shell nixpkgs#ripgrep nixpkgs#jq",
+      "category": "nix",
+      "description": "Open a temporary shell with selected packages available on PATH.",
+      "tags": [
+        "nix",
+        "shell",
+        "tools"
+      ],
+      "notes": "Replace package names with the tools you need."
+    },
+    {
+      "name": "nix-store-optimize",
+      "cmd": "nix-store --optimise",
+      "category": "nix",
+      "description": "Hard-link duplicate files inside the Nix store to reduce disk usage.",
+      "tags": [
+        "nix",
+        "disk",
+        "store"
+      ],
+      "notes": "Safe but can take time on large stores."
+    },
+    {
+      "name": "nix-store-roots",
+      "cmd": "nix-store --gc --print-roots",
+      "category": "nix",
+      "description": "List garbage-collection roots that keep store paths alive.",
+      "tags": [
+        "nix",
+        "gc",
+        "debug"
+      ],
+      "notes": "Use before deleting profiles or wondering why disk usage stayed high."
+    },
+    {
+      "name": "nix-why-depends",
+      "cmd": "nix why-depends /run/current-system $(nix build --no-link --print-out-paths nixpkgs#openssl)",
+      "category": "nix",
+      "description": "Explain why the current system closure depends on a package path.",
+      "tags": [
+        "nix",
+        "closure",
+        "debug"
+      ],
+      "notes": "Replace openssl with the package you are investigating."
+    },
+    {
+      "name": "nixos-build-vm",
+      "cmd": "nixos-rebuild build-vm --flake ~/nixos-config#$(hostname)",
+      "category": "nixos",
+      "description": "Build a local VM from the selected NixOS host configuration.",
+      "tags": [
+        "nixos",
+        "vm",
+        "flake"
+      ],
+      "notes": "Useful before switching major system modules."
+    },
+    {
+      "name": "nixos-generation-list",
+      "cmd": "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system",
+      "category": "nixos",
+      "description": "List system generations available for rollback.",
+      "tags": [
+        "nixos",
+        "rollback",
+        "system"
+      ],
+      "notes": "Use before garbage collection if you need to preserve rollback points."
+    },
+    {
+      "name": "nixos-option",
+      "cmd": "nixos-option services.SERVICE.enable",
+      "category": "nixos",
+      "description": "Inspect the effective value and declaration location for a NixOS option.",
+      "tags": [
+        "nixos",
+        "options",
+        "debug"
+      ],
+      "notes": "Replace the option path with the module option you are investigating."
+    },
+    {
+      "name": "nixos-repl-flake",
+      "cmd": "nix repl --expr 'builtins.getFlake (toString ./.)'",
+      "category": "nixos",
+      "description": "Open a Nix REPL with the current flake loaded.",
+      "tags": [
+        "nixos",
+        "nix",
+        "debug"
+      ],
+      "notes": "Useful for inspecting outputs and module values interactively."
+    },
+    {
+      "name": "nixos-switch",
+      "cmd": "sudo nixos-rebuild switch --flake ~/nixos-config#$(hostname)",
+      "category": "nixos",
+      "description": "Build and activate the NixOS system configuration for the current host.",
+      "tags": [
+        "nixos",
+        "flake",
+        "system"
+      ],
+      "notes": "Run from anywhere if the flake path is correct. Replace the host selector when building another machine."
+    },
+    {
+      "name": "nixos-test",
+      "cmd": "sudo nixos-rebuild test --flake ~/nixos-config#$(hostname)",
+      "category": "nixos",
+      "description": "Build and activate a NixOS configuration until the next reboot without making it the boot default.",
+      "tags": [
+        "nixos",
+        "flake",
+        "safe"
+      ],
+      "notes": "Good for risky service, kernel, display, and networking changes."
+    },
+    {
+      "name": "opencode-help",
+      "cmd": "opencode --help",
+      "category": "opencode",
+      "description": "Show OpenCode CLI options for the installed version.",
+      "tags": [
+        "opencode",
+        "cli",
+        "help"
+      ],
+      "notes": "Check the local CLI instead of assuming flags."
+    },
+    {
+      "name": "opencode-run",
+      "cmd": "opencode",
+      "category": "opencode",
+      "description": "Start OpenCode in the current repository.",
+      "tags": [
+        "opencode",
+        "agent",
+        "coding"
+      ],
+      "notes": "Use OpenCode as the default coding harness when working interactively."
+    },
+    {
+      "name": "neon-connection-test",
+      "cmd": "psql \"$DATABASE_URL\" -c 'select current_database(), current_user, now();'",
+      "category": "postgres",
+      "description": "Verify a Postgres or Neon DATABASE_URL connects and returns basic identity info.",
+      "tags": [
+        "postgres",
+        "neon",
+        "debug"
+      ],
+      "notes": "Confirms the URL, credentials, SSL handling, and network path."
+    },
+    {
+      "name": "postgres-active-queries",
+      "cmd": "psql \"$DATABASE_URL\" -c \"select pid, state, wait_event_type, now() - query_start as age, left(query, 120) as query from pg_stat_activity where state <> 'idle' order by query_start;\"",
+      "category": "postgres",
+      "description": "List currently active Postgres queries with wait state and age.",
+      "tags": [
+        "postgres",
+        "performance",
+        "debug"
+      ],
+      "notes": "Useful when an app appears hung or slow."
+    },
+    {
+      "name": "postgres-connect",
+      "cmd": "psql \"$DATABASE_URL\"",
+      "category": "postgres",
+      "description": "Open psql using the DATABASE_URL environment variable.",
+      "tags": [
+        "postgres",
+        "psql",
+        "database"
+      ],
+      "notes": "Make sure DATABASE_URL is set in the current shell."
+    },
+    {
+      "name": "postgres-extensions",
+      "cmd": "psql \"$DATABASE_URL\" -c 'select extname, extversion from pg_extension order by extname;'",
+      "category": "postgres",
+      "description": "List installed Postgres extensions and versions.",
+      "tags": [
+        "postgres",
+        "extensions",
+        "database"
+      ],
+      "notes": "Useful before relying on uuid, vector, trigram, or crypto features."
+    },
+    {
+      "name": "postgres-locks",
+      "cmd": "psql \"$DATABASE_URL\" -c \"select locktype, relation::regclass, mode, granted, pid from pg_locks where not granted order by pid;\"",
+      "category": "postgres",
+      "description": "Show ungranted Postgres locks that may be blocking migrations or requests.",
+      "tags": [
+        "postgres",
+        "locks",
+        "debug"
+      ],
+      "notes": "Pair with pg_stat_activity when debugging stuck queries."
+    },
+    {
+      "name": "postgres-table-sizes",
+      "cmd": "psql \"$DATABASE_URL\" -c \"select relname, pg_size_pretty(pg_total_relation_size(relid)) as size from pg_catalog.pg_statio_user_tables order by pg_total_relation_size(relid) desc;\"",
+      "category": "postgres",
+      "description": "Show user tables ordered by total on-disk size.",
+      "tags": [
+        "postgres",
+        "disk",
+        "database"
+      ],
+      "notes": "Includes indexes and TOAST storage."
+    },
+    {
+      "name": "cpu-memory-top",
+      "cmd": "ps -eo pid,ppid,user,stat,%cpu,%mem,cmd --sort=-%cpu | head -30",
+      "category": "process",
+      "description": "Show the top CPU-consuming processes with parent PID and command.",
+      "tags": [
+        "process",
+        "cpu",
+        "debug"
+      ],
+      "notes": "Change --sort=-%mem to rank by memory."
+    },
+    {
+      "name": "kill-tree-preview",
+      "cmd": "pstree -ap PID",
+      "category": "process",
+      "description": "Inspect a process tree before stopping a parent process.",
+      "tags": [
+        "process",
+        "safe",
+        "debug"
+      ],
+      "notes": "Preview first so you know which child processes will be affected."
+    },
+    {
+      "name": "watch-process",
+      "cmd": "watch -n 1 'ps -p PID -o pid,ppid,stat,%cpu,%mem,etime,cmd'",
+      "category": "process",
+      "description": "Refresh one process status every second.",
+      "tags": [
+        "process",
+        "watch",
+        "debug"
+      ],
+      "notes": "Replace PID with the process id."
+    },
+    {
+      "name": "python-module-run",
+      "cmd": "python -m package.module",
+      "category": "python",
+      "description": "Run a Python module using import-safe module execution.",
+      "tags": [
+        "python",
+        "module",
+        "script"
+      ],
+      "notes": "Prefer this over running files directly when package imports matter."
+    },
+    {
+      "name": "python-mypy",
+      "cmd": "python -m mypy .",
+      "category": "python",
+      "description": "Run mypy type checking for typed Python modules.",
+      "tags": [
+        "python",
+        "types",
+        "verify"
+      ],
+      "notes": "Best for small typed modules and MCP/data tooling where explicit contracts matter."
+    },
+    {
+      "name": "python-pytest",
+      "cmd": "python -m pytest -q",
+      "category": "python",
+      "description": "Run Python tests quietly through the active interpreter.",
+      "tags": [
+        "python",
+        "test",
+        "verify"
+      ],
+      "notes": "Using python -m keeps the test runner tied to the selected environment."
+    },
+    {
+      "name": "python-ruff-check",
+      "cmd": "python -m ruff check .",
+      "category": "python",
+      "description": "Run Ruff lint checks for Python projects that use Ruff.",
+      "tags": [
+        "python",
+        "ruff",
+        "lint"
+      ],
+      "notes": "Only use where Ruff is already part of the repo or explicitly chosen."
+    },
+    {
+      "name": "python-venv",
+      "cmd": "python -m venv .venv && source .venv/bin/activate",
+      "category": "python",
+      "description": "Create and activate a local Python virtual environment for scripts or MCP tooling.",
+      "tags": [
+        "python",
+        "venv",
+        "tooling"
+      ],
+      "notes": "Use Python for glue code, data transforms, and MCP support unless the repo convention says otherwise."
+    },
+    {
+      "name": "cargo-add-axum-stack",
+      "cmd": "cargo add axum tokio tower tower-http tracing tracing-subscriber serde serde_json anyhow thiserror",
+      "category": "rust",
+      "description": "Add the common Rust web API dependency set.",
+      "tags": [
+        "rust",
+        "axum",
+        "backend"
+      ],
+      "notes": "Enable tokio features as needed in Cargo.toml, commonly rt-multi-thread and macros."
+    },
+    {
+      "name": "cargo-add-sqlx-postgres",
+      "cmd": "cargo add sqlx --features runtime-tokio-rustls,postgres,uuid,chrono,json,migrate",
+      "category": "rust",
+      "description": "Add SQLx with the Postgres feature set normally used for Tim's Rust services.",
+      "tags": [
+        "rust",
+        "sqlx",
+        "postgres"
+      ],
+      "notes": "Use SQLx for Rust database access instead of introducing a different ORM."
+    },
+    {
+      "name": "cargo-check-workspace",
+      "cmd": "cargo check --workspace --all-targets",
+      "category": "rust",
+      "description": "Type-check all workspace crates, examples, tests, and binaries.",
+      "tags": [
+        "rust",
+        "cargo",
+        "verify"
+      ],
+      "notes": "Faster than full tests when iterating on compile errors."
+    },
+    {
+      "name": "cargo-clippy-strict",
+      "cmd": "cargo clippy --workspace --all-targets -- -D warnings",
+      "category": "rust",
+      "description": "Run Clippy across the workspace and fail on warnings.",
+      "tags": [
+        "rust",
+        "lint",
+        "verify"
+      ],
+      "notes": "Good before commits on Rust backend changes."
+    },
+    {
+      "name": "cargo-fmt-check",
+      "cmd": "cargo fmt --all -- --check",
+      "category": "rust",
+      "description": "Check Rust formatting without rewriting files.",
+      "tags": [
+        "rust",
+        "format",
+        "verify"
+      ],
+      "notes": "Run cargo fmt --all to apply formatting."
+    },
+    {
+      "name": "cargo-new-api",
+      "cmd": "cargo new --bin api && cd api",
+      "category": "rust",
+      "description": "Create a new Rust binary crate suitable for an Axum API service.",
+      "tags": [
+        "rust",
+        "api",
+        "scaffold"
+      ],
+      "notes": "Use this as the starting point for durable backend services before adding axum, tokio, tracing, sqlx, and config crates."
+    },
+    {
+      "name": "cargo-nextest",
+      "cmd": "cargo nextest run --workspace",
+      "category": "rust",
+      "description": "Run Rust workspace tests with nextest when the project provides it.",
+      "tags": [
+        "rust",
+        "test",
+        "nextest"
+      ],
+      "notes": "Use cargo test if nextest is not installed or not configured."
+    },
+    {
+      "name": "cargo-run-tracing",
+      "cmd": "RUST_LOG=info,tower_http=debug cargo run",
+      "category": "rust",
+      "description": "Run a Rust service with useful tracing output for request and middleware debugging.",
+      "tags": [
+        "rust",
+        "tracing",
+        "debug"
+      ],
+      "notes": "Tune module filters when a specific crate is too noisy."
+    },
+    {
+      "name": "cargo-test-one",
+      "cmd": "cargo test TEST_NAME -- --nocapture",
+      "category": "rust",
+      "description": "Run Rust tests matching a name and show stdout/stderr.",
+      "tags": [
+        "rust",
+        "cargo",
+        "test"
+      ],
+      "notes": "Replace TEST_NAME with a substring of the test path."
+    },
+    {
+      "name": "ripgrep-context",
+      "cmd": "rg -n -C 2 'PATTERN' PATH",
+      "category": "search",
+      "description": "Search for a pattern with line numbers and two context lines.",
+      "tags": [
+        "search",
+        "ripgrep",
+        "code"
+      ],
+      "notes": "Omit PATH to search the current directory."
+    },
+    {
+      "name": "ripgrep-files",
+      "cmd": "rg --files",
+      "category": "search",
+      "description": "List files under the current directory while respecting ignore files.",
+      "tags": [
+        "search",
+        "files",
+        "ripgrep"
+      ],
+      "notes": "Faster and cleaner than find for most source trees."
+    },
+    {
+      "name": "ripgrep-hidden",
+      "cmd": "rg --hidden --glob '!{.git,node_modules,dist,target}' 'PATTERN'",
+      "category": "search",
+      "description": "Search hidden files while excluding common large generated directories.",
+      "tags": [
+        "search",
+        "hidden",
+        "code"
+      ],
+      "notes": "Useful for dotfiles and config repositories."
+    },
+    {
+      "name": "chmod-fix-private-key",
+      "cmd": "chmod 600 ~/.ssh/id_ed25519",
+      "category": "security",
+      "description": "Set private SSH key permissions to the mode OpenSSH expects.",
+      "tags": [
+        "ssh",
+        "permissions",
+        "security"
+      ],
+      "notes": "Only use on private key files, not public .pub files."
+    },
+    {
+      "name": "gpg-list-secret-keys",
+      "cmd": "gpg --list-secret-keys --keyid-format=long",
+      "category": "security",
+      "description": "List local GPG secret keys with long key IDs.",
+      "tags": [
+        "gpg",
+        "keys",
+        "security"
+      ],
+      "notes": "Useful before configuring git commit signing or agenix identities."
+    },
+    {
+      "name": "ssh-verbose",
+      "cmd": "ssh -vvv user@host",
+      "category": "security",
+      "description": "Run SSH with verbose negotiation logs for authentication and config debugging.",
+      "tags": [
+        "ssh",
+        "security",
+        "debug"
+      ],
+      "notes": "Avoid sharing full output publicly because it can reveal paths and host details."
+    },
+    {
+      "name": "tls-cert-check",
+      "cmd": "openssl s_client -connect example.com:443 -servername example.com </dev/null 2>/dev/null | openssl x509 -noout -subject -issuer -dates",
+      "category": "security",
+      "description": "Inspect the served TLS certificate subject, issuer, and validity dates.",
+      "tags": [
+        "tls",
+        "security",
+        "debug"
+      ],
+      "notes": "Replace both example.com values with the target host."
+    },
+    {
+      "name": "bash-strict-template",
+      "cmd": "printf '%s\\n' '#!/usr/bin/env bash' 'set -euo pipefail'",
+      "category": "shell",
+      "description": "Print the standard portable Bash script header.",
+      "tags": [
+        "bash",
+        "script",
+        "template"
+      ],
+      "notes": "Use Bash for portable scripts rather than zsh-specific features."
+    },
+    {
+      "name": "shellcheck-file",
+      "cmd": "shellcheck script.sh",
+      "category": "shell",
+      "description": "Lint a shell script with ShellCheck.",
+      "tags": [
+        "shell",
+        "lint",
+        "verify"
+      ],
+      "notes": "Run when editing non-trivial Bash or POSIX shell scripts."
+    },
+    {
+      "name": "zsh-reload",
+      "cmd": "exec zsh -l",
+      "category": "shell",
+      "description": "Reload the interactive zsh login shell after editing shell configuration.",
+      "tags": [
+        "zsh",
+        "shell",
+        "config"
+      ],
+      "notes": "Use zsh for interactive workflows on this machine."
+    },
+    {
+      "name": "sqlx-create-db",
+      "cmd": "sqlx database create",
+      "category": "sqlx",
+      "description": "Create the Postgres database referenced by DATABASE_URL.",
+      "tags": [
+        "sqlx",
+        "postgres",
+        "database"
+      ],
+      "notes": "Requires DATABASE_URL to be set."
+    },
+    {
+      "name": "sqlx-migrate-add",
+      "cmd": "sqlx migrate add NAME",
+      "category": "sqlx",
+      "description": "Create a new SQLx migration file.",
+      "tags": [
+        "sqlx",
+        "migration",
+        "postgres"
+      ],
+      "notes": "Use a descriptive snake_case migration name."
+    },
+    {
+      "name": "sqlx-migrate-revert",
+      "cmd": "sqlx migrate revert",
+      "category": "sqlx",
+      "description": "Revert the most recent SQLx migration when the migration has a down step.",
+      "tags": [
+        "sqlx",
+        "migration",
+        "database"
+      ],
+      "notes": "Use only on disposable local or branch databases unless rollback has been reviewed."
+    },
+    {
+      "name": "sqlx-migrate-run",
+      "cmd": "sqlx migrate run",
+      "category": "sqlx",
+      "description": "Apply pending SQLx migrations to the database in DATABASE_URL.",
+      "tags": [
+        "sqlx",
+        "migration",
+        "postgres"
+      ],
+      "notes": "Run against the intended local or branch database."
+    },
+    {
+      "name": "sqlx-prepare",
+      "cmd": "cargo sqlx prepare --workspace -- --all-targets",
+      "category": "sqlx",
+      "description": "Refresh SQLx offline query metadata for the whole Rust workspace.",
+      "tags": [
+        "sqlx",
+        "rust",
+        "verify"
+      ],
+      "notes": "Commit the generated .sqlx metadata when the repo uses offline query checking."
+    },
+    {
+      "name": "journal-follow-unit",
+      "cmd": "journalctl -u UNIT.service -f -n 100",
+      "category": "systemd",
+      "description": "Follow the latest logs for a system service.",
+      "tags": [
+        "systemd",
+        "logs",
+        "debug"
+      ],
+      "notes": "Use --user for user units and replace UNIT.service with the real unit name."
+    },
+    {
+      "name": "systemd-analyze-blame",
+      "cmd": "systemd-analyze blame",
+      "category": "systemd",
+      "description": "Show units ordered by startup time contribution.",
+      "tags": [
+        "systemd",
+        "boot",
+        "performance"
+      ],
+      "notes": "Combine with systemd-analyze critical-chain for boot ordering."
+    },
+    {
+      "name": "systemd-critical-chain",
+      "cmd": "systemd-analyze critical-chain",
+      "category": "systemd",
+      "description": "Show the boot dependency chain that delayed reaching the default target.",
+      "tags": [
+        "systemd",
+        "boot",
+        "debug"
+      ],
+      "notes": "Useful when boot feels slow but blame alone is misleading."
+    },
+    {
+      "name": "systemd-failed",
+      "cmd": "systemctl --failed",
+      "category": "systemd",
+      "description": "List failed system units that need investigation.",
+      "tags": [
+        "systemd",
+        "health",
+        "debug"
+      ],
+      "notes": "Run systemctl reset-failed UNIT after fixing a unit if you want to clear old failure state."
+    },
+    {
+      "name": "systemd-unit-status",
+      "cmd": "systemctl status UNIT.service",
+      "category": "systemd",
+      "description": "Show service state, recent logs, PID, exit code, and unit metadata.",
+      "tags": [
+        "systemd",
+        "service",
+        "debug"
+      ],
+      "notes": "Add --user for per-user services."
+    },
+    {
+      "name": "next-typecheck",
+      "cmd": "bunx tsc --noEmit",
+      "category": "typescript",
+      "description": "Run TypeScript checking without writing output files.",
+      "tags": [
+        "typescript",
+        "verify",
+        "nextjs"
+      ],
+      "notes": "Use when the repo does not already expose a check script."
+    },
+    {
+      "name": "bun-add-shadcn",
+      "cmd": "bunx shadcn@latest init",
+      "category": "ui",
+      "description": "Initialize shadcn/ui in a React or Next.js project.",
+      "tags": [
+        "shadcn",
+        "ui",
+        "react"
+      ],
+      "notes": "Use shadcn/ui when possible for Tim's default UI stack."
+    },
+    {
+      "name": "shadcn-add-components",
+      "cmd": "bunx shadcn@latest add button card dialog dropdown-menu input label select tabs textarea toast",
+      "category": "ui",
+      "description": "Add a practical baseline set of shadcn/ui components.",
+      "tags": [
+        "shadcn",
+        "ui",
+        "components"
+      ],
+      "notes": "Trim the list to the components actually needed for the feature."
+    },
+    {
+      "name": "tailwind-merge-classes",
+      "cmd": "bun add clsx tailwind-merge class-variance-authority",
+      "category": "ui",
+      "description": "Install common class composition helpers used by shadcn-style React UI.",
+      "tags": [
+        "tailwind",
+        "shadcn",
+        "react"
+      ],
+      "notes": "Usually already present after shadcn init; use when wiring a project manually."
+    },
+    {
+      "name": "nuxt-create",
+      "cmd": "bunx nuxi@latest init app",
+      "category": "vue-nuxt",
+      "description": "Create a Nuxt app when the project is already Vue/Nuxt oriented.",
+      "tags": [
+        "nuxt",
+        "vue",
+        "scaffold"
+      ],
+      "notes": "Use Nuxt as a frontend alternative only when it fits the repo direction."
+    },
+    {
+      "name": "vue-create",
+      "cmd": "bun create vue@latest app",
+      "category": "vue-nuxt",
+      "description": "Create a Vue project when the repo or product direction is already Vue.",
+      "tags": [
+        "vue",
+        "bun",
+        "scaffold"
+      ],
+      "notes": "Prefer Next.js for new default web apps unless Vue is the existing convention."
+    },
+    {
+      "name": "html-serve-static",
+      "cmd": "python -m http.server 8000",
+      "category": "web",
+      "description": "Serve static HTML/CSS files from the current directory.",
+      "tags": [
+        "html",
+        "css",
+        "static"
+      ],
+      "notes": "Useful for quick web primitive checks without adding a framework."
+    },
+    {
+      "name": "playwright-screenshot",
+      "cmd": "bunx playwright screenshot http://localhost:3000 screenshot.png",
+      "category": "web",
+      "description": "Capture a browser screenshot of a local web app for visual verification.",
+      "tags": [
+        "playwright",
+        "web",
+        "verify"
+      ],
+      "notes": "Start the dev server first and adjust the URL/port."
+    }
+  ]
+}

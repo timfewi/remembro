@@ -22,12 +22,22 @@ Or add it to your `flake.nix` inputs.
 # List commands
 remembro -l
 
+# List commands grouped by category
+remembro -t
+
 # Add command
 remembro -a "mycmd" "echo hello" "test"
 
 # Search command
 remembro "mycmd"
 ```
+
+Commands are stored in `~/.remembro/data.json`. Entries may include optional
+`description`, `tags`, and `notes` fields; list and search output will render
+those fields when present. `seed-data.json` contains a larger starter database
+for NixOS, Linux, Git, Docker Compose, Rust/Axum/SQLx, Next.js/Drizzle,
+Bun/Biome, Python tooling, MCP, OpenCode, OpenFang/ZeroClaw, and common
+development workflows.
 
 ## Dependencies
 - `jq`
