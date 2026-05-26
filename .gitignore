@@ -2,9 +2,21 @@
 .direnv
 result
 
+# Rust
+/target
+Cargo.lock
+
 # Data
 data.json
 *.tmp
+
+# Remembro v2 runtime
+.store.db
+.store.db-wal
+.store.db-shm
+logs/
+model/
+index/
 
 # IDE/Editor
 .vscode

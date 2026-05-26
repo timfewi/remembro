@@ -1,62 +1,133 @@
 {
-  description = "A CLI tool to remember and search for shell commands.";
+  description = "A terminal daemon to remember, search, and capture shell commands.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    crane.url = "github:ipetkov/crane";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      rust-overlay,
+      crane,
+      ...
+    }:
     let
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
-      mkPkg = system:
+      mkPkg =
+        system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
-          script = builtins.readFile ./remembro;
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ rust-overlay.overlays.default ];
+          };
+          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+            extensions = [
+              "rust-src"
+              "clippy"
+              "rustfmt"
+            ];
+          };
+          craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
+
+          src = craneLib.cleanCargoSource (craneLib.path ./.);
+          commonArgs = {
+            inherit src;
+            buildInputs =
+              with pkgs;
+              [
+                openssl
+                sqlite
+              ]
+              ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ ];
+            nativeBuildInputs = with pkgs; [ pkg-config ];
+          };
+
+          cargoArtifacts = craneLib.buildDepsOnly commonArgs;
         in
         rec {
-          remembro = pkgs.writeShellApplication {
-            name = "remembro";
-            runtimeInputs = [ pkgs.jq ];
-            excludeShellChecks = [ "SC2016" ];
-            text = script;
-            meta = {
-              description = "A CLI tool to remember and search for shell commands";
-              longDescription = ''
-                remembro stores shell commands in a local JSON database and
-                lets you list, search, add, edit, and delete them from the terminal.
-              '';
-              homepage = "https://github.com/timfewi/remembro";
-              license = pkgs.lib.licenses.mit;
-              maintainers = [ ];
-              platforms = pkgs.lib.platforms.unix;
-              mainProgram = "remembro";
-            };
-          };
-
-          rbro = pkgs.writeShellApplication {
-            name = "rbro";
-            runtimeInputs = [ remembro ];
-            text = ''exec remembro "$@"'';
-            meta = remembro.meta // { mainProgram = "rbro"; };
-          };
-
+          remembro = craneLib.buildPackage (
+            commonArgs
+            // {
+              inherit cargoArtifacts;
+              cargoExtraArgs = "--workspace";
+              meta = with pkgs.lib; {
+                description = "Terminal daemon to remember and search shell commands";
+                license = licenses.mit;
+                platforms = platforms.unix;
+                mainProgram = "rbro";
+              };
+            }
+          );
           default = remembro;
         };
+
     in
     {
       packages = forAllSystems mkPkg;
 
-      devShells = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system}; in
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ rust-overlay.overlays.default ];
+          };
+          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+            extensions = [
+              "rust-src"
+              "clippy"
+              "rustfmt"
+            ];
+          };
+        in
         {
           default = pkgs.mkShell {
-            packages = [ pkgs.jq ];
+            packages = with pkgs; [
+              rustToolchain
+              cargo-llvm-cov
+              cargo-watch
+              cargo-nextest
+              sqlx-cli
+              openssl
+              pkg-config
+              sqlite
+              jq
+            ];
+            RUST_BACKTRACE = 1;
+            RUST_LOG = "info";
+            shellHook = ''
+              echo "━━━ remembro v2 dev shell ━━━"
+              echo "  Build: nix build .#remembro"
+              echo "  Test:  cargo nextest run"
+              echo "  Lint:  cargo clippy"
+            '';
           };
         }
       );
 
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt);
+      # NixOS module
+      nixosModules = {
+        remembro = import ./nix/remembro-nixos-module.nix;
+        default = self.nixosModules.remembro;
+      };
+
+      # Home-manager module
+      homeManagerModules = {
+        remembro = import ./nix/remembro-home-manager.nix;
+        default = self.homeManagerModules.remembro;
+      };
+
+      formatter = forAllSystems (system: (import nixpkgs { inherit system; }).nixfmt-rfc-style);
     };
 }

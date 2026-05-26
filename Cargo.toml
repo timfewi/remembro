@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/rembrodd",       # Daemon binary
+    "crates/rbro",           # CLI client
+    "crates/remembro-lib",   # Shared library (protocol, DB, search)
+    "crates/remembro-mcp",   # MCP server binary
+    "crates/remembro-hook",  # Shell hook binary
+]
+
+[workspace.package]
+version = "2.0.0-dev"
+edition = "2024"
+license = "MIT"
+authors = ["Tim <tim@fewi.dev>"]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+anyhow = "1"
+thiserror = "2"
+clap = { version = "4", features = ["derive"] }
+dirs = "6"
+toml = "0.8"
+shellexpand = "3"
+owo-colors = "4"
+sd-notify = "0.3"

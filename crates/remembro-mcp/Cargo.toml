@@ -1,0 +1,17 @@
+[package]
+name = "remembro-mcp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "remembro-mcp"
+path = "src/main.rs"
+
+[dependencies]
+remembro-lib = { path = "../remembro-lib" }
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+clap.workspace = true

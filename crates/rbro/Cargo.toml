@@ -1,0 +1,18 @@
+[package]
+name = "rbro"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "rbro"
+path = "src/main.rs"
+
+[dependencies]
+remembro-lib = { path = "../remembro-lib" }
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+owo-colors.workspace = true
