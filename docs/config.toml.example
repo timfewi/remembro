@@ -1,0 +1,79 @@
+# Remembro daemon configuration
+# Located at: ~/.remembro/config.toml
+
+[daemon]
+# Path to the main Unix socket (daemon control)
+# Default: $XDG_RUNTIME_DIR/remembro/rembro.sock
+socket_path = "/run/user/1000/remembro/rembro.sock"
+
+# Path to the agent capture socket
+# Default: $XDG_RUNTIME_DIR/remembro/capture.sock
+capture_socket_path = "/run/user/1000/remembro/capture.sock"
+
+# Path to the capture FIFO (fallback)
+# Default: ~/.remembro/capture.fifo
+capture_fifo_path = "/home/tim/.remembro/capture.fifo"
+
+# PID file path
+# Default: $XDG_RUNTIME_DIR/remembro/rembrodd.pid
+pid_file = "/run/user/1000/remembro/rembrodd.pid"
+
+[database]
+# Path to SQLite database
+# Default: ~/.remembro/store.db
+path = "/home/tim/.remembro/store.db"
+
+# Enable WAL mode for better concurrent read performance
+wal_mode = true
+
+[vector]
+# Enable vector search (requires ONNX model download on first run)
+enabled = true
+
+# Path to downloaded ONNX embedding model
+# Default: ~/.remembro/model/all-MiniLM-L6-v2.onnx
+model_path = "/home/tim/.remembro/model/all-MiniLM-L6-v2.onnx"
+
+# Path to HNSW vector index file
+# Default: ~/.remembro/index/commands.hnsw
+index_path = "/home/tim/.remembro/index/commands.hnsw"
+
+# Embedding dimensions (384 for MiniLM, 768 for MPNet, etc.)
+dimensions = 384
+
+# Maximum results per search
+search_limit = 20
+
+# Minimum similarity threshold (0.0 - 1.0) for vector search
+search_threshold = 0.6
+
+[capture]
+# Enable command capture from shell/agent hooks
+enabled = true
+
+# Minimum time (ms) between captures from same source
+rate_limit_ms = 500
+
+# Shell commands to skip (regex patterns)
+skip_patterns = ["^ls$", "^cd ", "^pwd$", "^clear$", "^exit$"]
+
+# Dedup window (seconds) — skip same command within this window
+dedup_seconds = 60
+
+[log]
+# Log level: error, warn, info, debug, trace
+level = "info"
+
+# Path to JSONL log file
+# Default: ~/.remembro/logs/rembrodd.jsonl
+path = "/home/tim/.remembro/logs/rembrodd.jsonl"
+
+# Max file size before rotation (MB)
+max_size_mb = 10
+
+# Number of rotated log files to keep
+max_files = 7
+
+# Whether to log to stderr/journald in addition to JSONL
+also_journal = true
+

@@ -1,0 +1,175 @@
+# Remembro CI/CD Pipeline
+# Builds, tests, and releases the Rust daemon + CLI client.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: short
+
+jobs:
+  # ── Quality checks ──────────────────────────────────────────
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - run: nix flake check -L
+      - run: nix build .#remembro -L
+      - run: nix fmt -- --check
+
+  # ── Build matrix ────────────────────────────────────────────
+  build:
+    name: Build (${{ matrix.os }})
+    needs: [check]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: macos-latest
+            target: aarch64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+      - name: Build package
+        run: nix build .#remembro -L
+      - name: Archive binaries
+        run: |
+          mkdir -p dist
+          cp result/bin/* dist/
+          cd dist
+          sha256sum * | tee checksums.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: remembro-${{ matrix.target }}
+          path: dist/
+
+  # ── Rust tests ──────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: [check]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+      - name: Run tests
+        run: nix develop -c cargo test --all-features
+      - name: Run clippy
+        run: nix develop -c cargo clippy -- -D warnings
+
+  # ── Integration tests ───────────────────────────────────────
+  integration:
+    name: Integration
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+      - name: Build
+        run: nix build .#remembro -L
+      - name: Start daemon and test
+        run: |
+          set -euo pipefail
+
+          # Start daemon in background
+          mkdir -p $HOME/.remembro/logs
+          ./result/bin/rembrodd &
+          DAEMON_PID=$!
+          sleep 2
+
+          # Cleanup on exit
+          cleanup() { kill $DAEMON_PID 2>/dev/null || true; }
+          trap cleanup EXIT
+
+          # Test daemon is running
+          if ! kill -0 $DAEMON_PID 2>/dev/null; then
+            echo "FAIL: daemon failed to start"
+            cat $HOME/.remembro/logs/rembrodd.jsonl
+            exit 1
+          fi
+          echo "PASS: daemon started (pid $DAEMON_PID)"
+
+          # Test status
+          ./result/bin/rbro status
+          echo "PASS: rbro status"
+
+          # Test add command
+          ./result/bin/rbro add docker-build "docker build -t myapp ." containers
+          echo "PASS: rbro add"
+
+          # Test list
+          ./result/bin/rbro -l | grep -q "docker-build"
+          echo "PASS: rbro list"
+
+          # Test search
+          ./result/bin/rbro search docker | grep -q "docker-build"
+          echo "PASS: rbro search"
+
+          # Test delete
+          ./result/bin/rbro delete docker-build
+          echo "PASS: rbro delete"
+
+          # Test agent capture socket
+          echo '{"source":"test","cmd":"echo hello"}' \
+            | nc -U -w1 "$XDG_RUNTIME_DIR/remembro/capture.sock"
+          echo "PASS: agent capture"
+
+          echo "All integration tests passed."
+
+  # ── Release ─────────────────────────────────────────────────
+  release:
+    name: Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, test, integration]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: cachix/cachix-action@v14
+        with:
+          name: remembro
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Build all outputs
+        run: nix build .#remembro .#rbro -L
+
+      - name: Generate release artifacts
+        run: |
+          mkdir -p release-artifacts
+          cp result/bin/* release-artifacts/
+          cd release-artifacts
+          sha256sum * | tee checksums.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: platform-artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-artifacts/*
+            platform-artifacts/**/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false
